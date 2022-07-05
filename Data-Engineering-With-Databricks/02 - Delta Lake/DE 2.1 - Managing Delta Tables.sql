@@ -217,10 +217,6 @@ DROP TABLE students
 
 -- COMMAND ----------
 
-
-
--- COMMAND ----------
-
 -- MAGIC %md 
 -- MAGIC Run the following cell to delete the tables and files associated with this lesson.
 
