@@ -60,7 +60,19 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL_IN> ${da.paths.datasets}/raw/events-kafka/
+
+CREATE  or replace temporary view events_json_temp_view
+AS
+select * from JSON.`${da.paths.datasets}/raw/events-kafka/`;
+
+  
+--select * from events_json
+
+-- COMMAND ----------
+
+
+CREATE OR REPLACE TABLE events_json LOCATION '${da.paths.working_dir}/external_table' AS
+  SELECT cast(key as binary),offset,cast(partition as int),timestamp,topic,cast(value as binary) FROM events_json_temp_view;
 
 -- COMMAND ----------
 
@@ -85,7 +97,9 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL_IN>
+create table events_raw 
+as
+select * from events_json where 1=2
 
 -- COMMAND ----------
 
@@ -106,7 +120,8 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL_IN>
+insert into events_raw
+select * from events_json
 
 -- COMMAND ----------
 
@@ -116,7 +131,7 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL_IN>
+select * from events_raw
 
 -- COMMAND ----------
 
@@ -138,7 +153,9 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL_IN> ${da.paths.datasets}/raw/item-lookup
+create table item_lookup as select * from parquet.`${da.paths.datasets}/raw/item-lookup`
+
+
 
 -- COMMAND ----------
 

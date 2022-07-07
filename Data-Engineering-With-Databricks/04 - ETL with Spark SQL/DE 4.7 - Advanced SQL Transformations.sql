@@ -141,7 +141,8 @@ WHERE ecommerce.purchase_revenue_in_usd IS NOT NULL
 
 -- COMMAND ----------
 
-SELECT user_id, event_timestamp, event_name, explode(items) AS item FROM events where user_id='UA000000102368951' order by event_name,event_timestamp
+SELECT user_id, event_timestamp, event_name, explode(items) AS item FROM events where user_id='UA000000102368951' --and event_timestamp='1592554948988644' 
+order by event_timestamp
 
 -- COMMAND ----------
 
@@ -163,9 +164,9 @@ SELECT user_id,
   array_distinct(flatten(collect_set(items.item_id))) AS cart_history,
   event_timestamp
 FROM events
-where user_id='UA000000102368951'
+where user_id='UA000000102368951'-- and event_timestamp=1592554948988644
 GROUP BY user_id,event_timestamp
-order by  user_id,event_timestamp
+order by  event_timestamp
 
 -- COMMAND ----------
 

@@ -86,17 +86,106 @@ from events e  inner join transactions t on e.user_id=t.user_id group by e.user_
 
 -- COMMAND ----------
 
--- TODO
-CREATE OR REPLACE VIEW events_pivot
-select 
-("cart", "pillows", "login", "main", "careers", "guest", "faq", "down", "warranty", "finalize", 
-"register", "shipping_info", "checkout", "mattresses", "add_item", "press", "email_coupon", 
-"cc_info", "foam", "reviews", "original", "delivery", "premium")
+drop table clickpaths;
+
+-- COMMAND ----------
+
+
+create or replace view  events_pivot
+as
+select
+  user_id as user,
+  sum(cart             )  as cart,   
+  sum(pillows          ) as pillows,
+  sum(login            ) as login,
+  sum(main             ) as main,
+  sum(careers          ) as careers,
+  sum(guest)            as guest,
+  sum(faq) as faq,
+  sum(down) as down,
+  sum(warranty) as warranty,
+  sum(finalize) as finalize,
+  sum(register) as register,
+  sum(shipping_info) as shipping_info,
+  sum(checkout) as checkout,
+  sum(mattresses) as mattresses,
+  sum(add_item) as add_item,
+  sum(press) as press,
+  sum(email_coupon) as email_coupon,
+  sum(cc_info) as cc_info,
+  sum(foam) as foam,
+  sum(reviews) as reviews,
+  sum(original) as original,
+  sum(delivery) as delivery,
+  sum(premium) as premium
+from
+(
+select
+          user_id,
+          cart,
+          pillows,
+          login,
+          main,
+          careers,
+          guest,
+          faq,
+          down,
+          warranty,
+          finalize,
+          register,
+          shipping_info,
+          checkout,
+          mattresses,
+          add_item,
+          press,
+          email_coupon,
+          cc_info,
+          foam,
+          reviews,
+          original,
+          delivery,
+          premium
+    from
+      events 
+
+      PIVOT (
+        count(*) FOR event_name in (
+          "cart",
+          "pillows",
+          "login",
+          "main",
+          "careers",
+          "guest",
+          "faq",
+          "down",
+          "warranty",
+          "finalize",
+          "register",
+          "shipping_info",
+          "checkout",
+          "mattresses",
+          "add_item",
+          "press",
+          "email_coupon",
+          "cc_info",
+          "foam",
+          "reviews",
+          "original",
+          "delivery",
+          "premium"
+        )
+      )
+      )
+      group by user_id
 
 -- COMMAND ----------
 
 -- MAGIC %md
 -- MAGIC **NOTE**: We'll use Python to run checks occasionally throughout the lab. The helper functions below will return an error with a message on what needs to change if you have not followed instructions. No output means that you have completed this step.
+
+-- COMMAND ----------
+
+select * from events_pivot limit 10
 
 -- COMMAND ----------
 
@@ -150,11 +239,16 @@ select
 
 -- TODO
 CREATE OR REPLACE VIEW clickpaths AS
-<FILL_IN>
+select e.*,t.*
+from events_pivot e  inner join transactions t on e.user=t.user_id 
 
 -- COMMAND ----------
 
 -- MAGIC %md Run the cell below to confirm the table was created correctly.
+
+-- COMMAND ----------
+
+select * from clickpaths
 
 -- COMMAND ----------
 
@@ -167,6 +261,7 @@ CREATE OR REPLACE VIEW clickpaths AS
 -- MAGIC %md
 -- MAGIC ## Flag Types of Products Purchased
 -- MAGIC Here, you'll use the higher order function **`EXISTS`** to create boolean columns **`mattress`** and **`pillow`** that indicate whether the item purchased was a mattress or pillow product.
+-- MAGIC use the **`Sales`** table for this question
 -- MAGIC 
 -- MAGIC For example, if **`item_name`** from the **`items`** column ends with the string **`"Mattress"`**, the column value for **`mattress`** should be **`true`** and the value for **`pillow`** should be **`false`**. Here are a few examples of items and the resulting values.
 -- MAGIC 
@@ -181,11 +276,22 @@ CREATE OR REPLACE VIEW clickpaths AS
 
 -- COMMAND ----------
 
+select * from sales
+
+-- COMMAND ----------
+
+select items,exists(items, i -> i.item_name LIKE "%Mattress" )  as  mattress, exists(items, i -> i.item_name LIKE "%Pillow" ) as pillow   from sales 
+
+-- COMMAND ----------
+
 -- TODO
 CREATE OR REPLACE TABLE sales_product_flags AS
-<FILL_IN>
-EXISTS <FILL_IN>.item_name LIKE "%Mattress"
-EXISTS <FILL_IN>.item_name LIKE "%Pillow"
+select items,exists(items, i -> i.item_name LIKE "%Mattress" )  as  mattress, exists(items, i -> i.item_name LIKE "%Pillow" ) as pillow   from sales 
+
+-- COMMAND ----------
+
+
+select count( items) from sales_product_flags where mattress is  true or pillow is  true
 
 -- COMMAND ----------
 
