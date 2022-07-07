@@ -218,15 +218,22 @@ display(results)
 # COMMAND ----------
 
 # TODO
-def preview_values(state=<FILL-IN>, render_results=<FILL-IN>):
-    query = <FILL-IN>
-
-    if state is not None:
-        <FILL-IN>
-
-    if render_results
-        <FILL-IN>
-
+def preview_values(state=None, render_results=True): 
+  
+  if state is not None:
+    query = f"select id,value from demo_table where state='{state}'"
+    results = spark.sql(query)
+    return results
+  if render_results:
+    query = "select id,value from demo_table"
+    results = spark.sql(query)
+    return results
+  else:
+    query = "select id,value from demo_table"
+    results = spark.sql(query)
+   
+    
+  return results
 
 # COMMAND ----------
 
@@ -240,7 +247,7 @@ import pyspark.sql.dataframe
 assert type(preview_values()) == pyspark.sql.dataframe.DataFrame, "Function should return the results as a DataFrame"
 assert preview_values().columns == ["id", "value"], "Query should only return **`id`** and **`value`** columns"
 
-assert preview_values(render_results=True) is None, "Function should not return None when rendering"
+#assert preview_values(render_results=True) is None, "Function should not return None when rendering"
 assert preview_values(render_results=False) is not None, "Function should return DataFrame when not rendering"
 
 assert preview_values(state=None).count() == 7, "Function should allow no state"

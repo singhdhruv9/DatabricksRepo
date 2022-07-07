@@ -213,7 +213,7 @@ assert type(2) == int
 
 # COMMAND ----------
 
-# assert type("2") == int
+ assert type("2") == int
 
 # COMMAND ----------
 
@@ -248,7 +248,7 @@ int("2")
 
 # COMMAND ----------
 
-# int("two")
+ int("two")
 
 # COMMAND ----------
 
@@ -460,7 +460,7 @@ def injection_check(query):
 
 # COMMAND ----------
 
-# injection_check(injection_query)
+ injection_check(injection_query)
 
 # COMMAND ----------
 
